@@ -12,6 +12,7 @@ const footerRouter = require('./routes/footerRouter');
 const receiversRouter = require('./routes/receiversRouter');
 const ccsRouter = require('./routes/ccsRouter');
 const letterRouter = require('./routes/letterRouter');
+const approverRouter = require('./routes/approverRouter');
 
 const app = express();
 app.use(express.json());
@@ -44,6 +45,7 @@ app.use('/api/footers', footerRouter);
 app.use('/api/receivers', receiversRouter);
 app.use('/api/ccs', ccsRouter);
 app.use('/api/letters', letterRouter);
+app.use('/api/approvers', approverRouter);
 
 
 const PORT = process.env.PORT || 8001;

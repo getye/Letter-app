@@ -18,10 +18,6 @@ const findUserByEmail = async (email) => {
               model: Role, // Include the Role model to fetch role permissions
               attributes: ['permissions'], // Only fetch the permissions field from Role
             },
-            {
-              model: Office, // Include the Office model
-              attributes: ['type'], // Fetch only the type field
-            },
           ],
         },
       ],

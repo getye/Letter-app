@@ -106,7 +106,7 @@ const handleSubmit = async (event) => {
     }}>
       <OfficeTable handleOpen={handleOpen} />
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth>
         <DialogTitle>Add Office</DialogTitle>
         <DialogContent>
           <TextField

@@ -69,7 +69,7 @@ const InlineStyleControls = ({ editorState, onToggle }) => {
 
 export const NewLetter = () => {
 
-
+  const [submit, setSubmit] = useState(false)
   const [formData, setFormData] = useState({
     header: "",
     receivers: "",
@@ -210,7 +210,15 @@ const handleSave = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Success:", data);
+          setFormData({
+            header: "",
+            receivers: "",
+            subject: "",
+            content: EditorState.createEmpty(), 
+            ccs: "",
+            footer: "",
+          })
+          setSubmit(true)
           toast.success("Letter saved to draft!")
         })
         .catch((error) => {
@@ -234,7 +242,6 @@ const handleSubmit = () => {
         content: contentAsText,
         ccs: formData.ccs,
         footer: formData.footer,
-        status:"Pending",
        };
   
       if(formData.receivers !=="" || formData.subject !== "" || formData.content){
@@ -254,7 +261,15 @@ const handleSubmit = () => {
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log("Success:", data);
+            setFormData({
+              header: "",
+              receivers: "",
+              subject: "",
+              content: EditorState.createEmpty(), 
+              ccs: "",
+              footer: "",
+            })
+            setSubmit(true)
             toast.success("Letter submited!")
           })
           .catch((error) => {
@@ -271,10 +286,14 @@ const handleSubmit = () => {
     <Box sx={{ maxWidth: {xs:"95%", sm:"75%", md:"60%"}, mx: "auto", mt:5, mb:8 }}>
       
       {/* Header */}
-      <AddNewHeader sendSelectedHeader={setSelectedHeader}/>
+      <AddNewHeader 
+          sendSelectedHeader={setSelectedHeader} 
+          submit={submit}/>
 
       {/* Receivers */}
-      <AddNewReceivers sendReceivers={receivedReceivers}/>
+      <AddNewReceivers 
+          sendReceivers={receivedReceivers} 
+          submit={submit}/>
 
        {/* Subject */}
       <Box>
@@ -344,10 +363,14 @@ const handleSubmit = () => {
       </Box>
 
       {/* CCs */}
-      <AddNewCCs sendCcs={receivedCcs}/>
+      <AddNewCCs 
+          sendCcs={receivedCcs} 
+          submit={submit}/>
 
       {/* Footer */}
-      <AddNewFooter sendSelectedFooter={setSelectedFooter}/>
+      <AddNewFooter 
+          sendSelectedFooter={setSelectedFooter} 
+          submit={submit}/>
 
       <Box
         sx={{

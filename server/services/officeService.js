@@ -52,6 +52,19 @@ const getOffices = async () => {
   }
 };
 
+const getOfficesByUserId = async (userId) => {
+  try {
+    const offices = await Office.findAll({
+      where: { writer: userId }, // Matches the writer field
+      attributes: ['type'], // Fetch specific office fields
+    });
+
+    return offices;
+  } catch (error) {
+    console.error('Error fetching offices:', error);
+    throw error;
+  }
+};
 
 const updateOffice = async (id, office_name, writer, head, manager) => {
   try {
@@ -78,4 +91,5 @@ module.exports = {
   addOffice,
   getOffices,
   updateOffice,
+  getOfficesByUserId,
 };

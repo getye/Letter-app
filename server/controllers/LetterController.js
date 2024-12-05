@@ -4,7 +4,7 @@ const { toEthiopian } = require('ethiopian-date');
 const { v4: uuidv4 } = require('uuid');
 const { generateTokens } = require('../utils/jwt.helper'); 
 const sendEmail = require('../utils/emailService');
-
+const { getOfficesByUserId } = require('../services/officeService')
 const { 
     addLetter,
     getLetters,
@@ -57,7 +57,25 @@ const addLetterHandler = async (req, res) => {
        const ref_no = generateReferenceNumber();
        const date = ethiopianDate();
        const writer = req.user.userId;
-       const { header, receivers, subject, content, ccs, footer, status } = req.body; 
+       const office_type = await getOfficesByUserId(writer)
+       const officeType = office_type.length > 0 ? office_type[0].dataValues.type : null;
+
+       console.log("Office type:", officeType)
+       let status = "";
+       switch(officeType){
+          case "Department":
+            status ="Pending for department approval";
+            break;
+          case "Managing":
+            status ="Pending for managing approval";
+            break;
+          case "Executive":
+            status ="Pending for executive approval"; 
+            break;
+          default:
+            console.log("Error")
+       }
+       const { header, receivers, subject, content, ccs, footer } = req.body; 
        
        await addLetter( ref_no, date, header, writer, receivers, subject, content, ccs, footer, status);
        res.status(201).json({ message: "Letter created successfully"});

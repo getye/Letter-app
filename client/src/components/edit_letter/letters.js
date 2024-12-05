@@ -3,8 +3,12 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import { MaterialReactTable } from 'material-react-table';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import LetterDetailDialog from '../new_letter/letterDetailDialog';
 import { EditLetter } from './editletterDialog';
+import { AcceptLetter } from '../approve_letter/acceptLetter';
+import { RejectLetter } from '../approve_letter/rejectLetter';
 
 export const Letters = () => {
   const [letters, setLetters] = useState([]);
@@ -12,12 +16,18 @@ export const Letters = () => {
   const [error, setError] = useState(null);
   const [selectedLetter, setSelectedLetter] = useState(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [ref_no, setRef_no] = useState('');
+  const [acceptedLetter, setAcceptedLetter] = useState({
+    ref_no: "",
+    remark: "",
+  });
 
 
   const permissions = localStorage.getItem('permissions');
   const role = localStorage.getItem('userRole');
-
 
 
   useEffect(() => {
@@ -67,9 +77,16 @@ export const Letters = () => {
   };
 
   const handleDialogClose = () => {
-    setSelectedLetter(null);
+    setSelectedLetter();
+    setRef_no('');
+    setAcceptedLetter({
+      ref_no: "",
+      remark: "",
+    })
     setViewDialogOpen(false);
     setEditDialogOpen(false);
+    setAcceptDialogOpen(false)
+    setRejectDialogOpen(false)
 
   };
 
@@ -93,16 +110,32 @@ export const Letters = () => {
     console.log("Selected letter:", parsedLetter)
   };
 
+  
+
+  const handleAccept = (ref_no, remark) => {
+    setAcceptedLetter({
+      ref_no: ref_no,
+      remark: remark,
+    });
+    setAcceptDialogOpen(true);
+  };
+
+  const handleReject = (ref_no) => {
+    setRef_no(ref_no);
+    setRejectDialogOpen(true);
+  };
+
   const columns = [
     { accessorKey: 'ref_no', header: 'Ref_No' },
     { accessorKey: 'date', header: 'Date (E.C.)' },
     { accessorKey: 'status', header: 'Status' },
+    { accessorKey: 'remark', header: 'Remark' },
     {
       header: 'Action',
       Cell: ({ row }) => (
         <Box>
           <Tooltip title="View Detail">
-            <IconButton onClick={() => handleViewDetail(row.original)}>
+            <IconButton color='info' onClick={() => handleViewDetail(row.original)}>
               <OpenInNewIcon />
             </IconButton>
           </Tooltip>
@@ -110,10 +143,67 @@ export const Letters = () => {
             <>
             {((row.original.status ==="Draft") || (row.original.status ==="Rejected")) &&(
             <Tooltip title="Edit Letter">
-              <IconButton onClick={() => handleEdit(row.original)}>
+              <IconButton color='primary' onClick={() => handleEdit(row.original)}>
                 <VisibilityIcon />
               </IconButton>
             </Tooltip>
+            )}
+            </>
+          )}
+
+         {role && (role === "Head") && (
+            <>
+            {(row.original.status ==="Pending for department approval")  &&(
+            <>
+            <Tooltip title="Accept Letter">
+              <IconButton color='success' onClick={() => handleAccept(row.original.ref_no, row.original.remark)}>
+                <CheckIcon/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Reject Letter">
+            <IconButton color='warning' onClick={() => handleReject(row.original.ref_no)}>
+              <CloseIcon/>
+            </IconButton>
+          </Tooltip>
+          </>
+            )}
+            </>
+          )}
+
+         {role && (role === "Manager") && (
+            <>
+            {(row.original.status ==="Pending for managing approval")  &&(
+            <>
+            <Tooltip title="Accept Letter">
+              <IconButton color='success' onClick={() => handleAccept(row.original.ref_no, row.original.remark)}>
+                <CheckIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Reject Letter">
+            <IconButton color='warning' onClick={() => handleReject(row.original.ref_no)}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+          </>
+            )}
+            </>
+          )}
+         
+         {role && (role === "Executive") && (
+            <>
+            {(row.original.status ==="Pending for executive approval")  &&(
+            <>
+            <Tooltip title="Accept Letter">
+              <IconButton color='success' onClick={() => handleAccept(row.original.ref_no, row.original.remark)}>
+                <CheckIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Reject Letter">
+            <IconButton color='warning' onClick={() => handleReject(row.original.ref_no)}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+          </>
             )}
             </>
           )}
@@ -126,7 +216,7 @@ export const Letters = () => {
   if (error) return <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>;
 
   return (
-    <Box sx={{ paddingTop: 3, width: '80%', margin: 'auto' }}>
+    <Box sx={{ paddingTop: 3, width: {xs:'100%', sm:'95%', md:'90%'}, margin: 'auto' }}>
       <MaterialReactTable
         columns={columns}
         data={letters}
@@ -141,6 +231,19 @@ export const Letters = () => {
         onClose={handleDialogClose}
         selectedLetter={selectedLetter}
       />
+
+      <AcceptLetter
+        open={acceptDialogOpen}
+        onClose={handleDialogClose}
+        selectedLetter={acceptedLetter}
+      />
+
+      <RejectLetter
+        open={rejectDialogOpen}
+        onClose={handleDialogClose}
+        selectedLetter={ref_no}
+      />
+
     <EditLetter
         open={editDialogOpen}
         onClose={handleDialogClose}

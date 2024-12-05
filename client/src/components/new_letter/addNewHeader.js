@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography,   Grid,  Button, Box, IconButton, TextField, Card, CardMedia, CardContent } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ViewHeaders } from "./viewHeader";
 
-export const AddNewHeader = ({sendSelectedHeader}) => {
+export const AddNewHeader = ({sendSelectedHeader, submit}) => {
 
   const [openHeader, setOpenHeader] =useState(false)
   const [newHeaderOpen, setNewHeaderOpen] =useState(false)
@@ -85,7 +85,11 @@ export const AddNewHeader = ({sendSelectedHeader}) => {
     setOpenHeader(false)
     toast.success("Header selected successfully!")
   }
-
+  useEffect(() => {
+    if (submit) {
+      setSelected([]);
+    }
+  }, [submit]);
 
   return (
     <Box

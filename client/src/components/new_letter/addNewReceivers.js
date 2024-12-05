@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography,  Button, Box, IconButton, TextField } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
-export const AddNewReceivers = ({sendReceivers}) => {
+export const AddNewReceivers = ({sendReceivers, submit}) => {
   
   const [openReceivers, setOpenReceivers] =useState(false)
   const [receivers, setReceivers] = useState([{ 
@@ -17,7 +17,6 @@ export const AddNewReceivers = ({sendReceivers}) => {
   const [savedReceivers, setSavedReceivers] = useState([]);
 
 
-  console.log("Receivers:", receivers)
   const handleReceiversOpen = () =>{
     setOpenReceivers(!openReceivers)
   }
@@ -95,6 +94,12 @@ export const AddNewReceivers = ({sendReceivers}) => {
           toast.error("Failed to save receivers. Please try again.");
         });
     };    
+
+    useEffect(() => {
+      if (submit) {
+        setSavedReceivers([]);
+      }
+    }, [submit]);
 
   return (
       <Box

@@ -17,9 +17,7 @@ return (
     <Grid 
         container 
         sx={{
-            alignItems: 'center', 
             pl: {xs: '1%', sm: '2%', md: '3%', lg: '5%'},
-            minHeight: '100vh'
         }}
         >
       <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>

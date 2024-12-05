@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography,   Grid,  Button, Box, IconButton, TextField, Card, CardContent, Divider } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -12,7 +12,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LanguageIcon from '@mui/icons-material/Language';
 
 
-export const AddNewFooter = ({sendSelectedFooter}) => {
+export const AddNewFooter = ({sendSelectedFooter, submit}) => {
 
   const [openFooter, setOpenFooter] =useState(false)
   const [newFooterOpen, setNewFooterOpen] =useState(false)
@@ -56,7 +56,6 @@ export const AddNewFooter = ({sendSelectedFooter}) => {
       website: footer.website,
      };
 
-    console.log("Footer Data:", footerData)
     if(footer.phone !=="" || footer.email !== ""){
       fetch("http://localhost:8001/api/footers/add", {
         method: "POST",
@@ -95,6 +94,12 @@ export const AddNewFooter = ({sendSelectedFooter}) => {
     setOpenFooter(false)
     toast.success("Footer selected successfully!")
   }
+
+  useEffect(() => {
+    if (submit) {
+      setSelected([]);
+    }
+  }, [submit]);
   return (
     <Box
       sx={{

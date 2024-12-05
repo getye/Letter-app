@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography,  Button, Box, IconButton, TextField } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -6,7 +6,7 @@ import { Add, Delete, Save } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export const AddNewCCs = ({sendCcs}) => {
+export const AddNewCCs = ({sendCcs, submit}) => {
 
   const [openCcs, setOpenCcs] =useState(false)
   const [ccs, setCcs] = useState([{ cc_name: "", cc_email: "" }]);
@@ -88,6 +88,12 @@ export const AddNewCCs = ({sendCcs}) => {
           toast.error("Failed to save ccs.");
         });
     };
+
+    useEffect(() => {
+      if (submit) {
+        setSavedCcs([]);
+      }
+    }, [submit]);
 
   return (
       <Box

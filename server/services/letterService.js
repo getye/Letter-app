@@ -83,7 +83,6 @@ const getLetters = async (user_id, role) => {
 
   try {
     // Determine the query conditions based on the role
-    let conditions = {};
     if (role === "Writer") {
       const letters = await Letter.findAll({
         where: { writer_id: user_id },
@@ -151,7 +150,7 @@ const getLetters = async (user_id, role) => {
         const officeIds = managedOffices.map((office) => office.office_id);
     
         const letters = await Letter.findAll({
-          where: { status: 'Pending for managing approval' },
+          //where: { status: 'Pending for managing approval' },
           include: [
             {
               model: User,
@@ -178,12 +177,17 @@ const getLetters = async (user_id, role) => {
       
       }
     else if (role === "Executive") { 
-        conditions = {
-          [Op.or]: [
-            { executive_id: user_id }, // Letters in the executive's office
-            //{ status: 'Pending for executive approval' },
-          ],
-        };
+      const letters = await Letter.findAll({
+        include: [
+          { model: Header, as: 'header' },
+          { model: User, as: 'writer' },
+          { model: Receiver, as: 'receiver' },
+          { model: CC, as: 'cc' },
+          { model: Approver, as: 'approver' },
+          { model: Footer, as: 'footer' },
+        ],
+      });
+      return letters;
       }
     else{
         throw new Error('Invalid role specified');
