@@ -67,10 +67,10 @@ const handleInputChange = (event) => {
 const handleSubmit = async (event) => {
     event.preventDefault();
     if(officeData.type === "Managing"){
-      officeData.head = null;
+      officeData.head = officeData.manager;
     }else if( officeData.type === "Executive"){
-      officeData.head = null;
-      officeData.manager = null;
+      officeData.head = officeData.executive;
+      officeData.manager = officeData.executive;
     }
 
     try {

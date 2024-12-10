@@ -59,130 +59,99 @@ const updateLetter = async (ref_no, subject, content, status) => {
 };
 
 const getLetters = async (user_id, role) => {
-
   try {
-    if (role === "Writer") {
-      const letters = await Letter.findAll({
-        where: { writer_id: user_id },
-        include: [
-          { model: Header, as: 'header' },
-          { model: User, as: 'writer' },
-          { model: Receiver, as: 'receiver' },
-          { model: CC, as: 'cc' },
-          { model: Approver, as: 'approver' },
-          { model: Footer, as: 'footer' },
-          { model: Office, as: 'office' },
-        ],
-      });
-  
-      return letters;
-    }
+    let whereConditions = {}; // Default where conditions
 
-    else if (role === "Head") {    
-      try {
+    // Common includes for all roles
+    const commonIncludes = [
+      { model: Header, as: 'header' },
+      { model: User, as: 'writer' },
+      { model: Receiver, as: 'receiver' },
+      { model: CC, as: 'cc' },
+      { model: Approver, as: 'approver' },
+      { model: Footer, as: 'footer' },
+      { model: Office, as: 'office' },
+    ];
+
+    // Role-based specific logic
+    switch (role) {
+      case "Writer":
+        whereConditions = { writer_id: user_id };
+        break;
+        
+      case "Head":
         const headOffice = await Office.findOne({
           where: { head: user_id },
           attributes: ['office_id'],
         });
-    
-        if (!headOffice) {
-          throw new Error('No office found for this head.');
-        }
-    
-        const letters = await Letter.findAll({
-          include: [
-            {
-              model: User,
-              as: 'writer', // Alias for the writer association in Letter
-            },
-            {
-              model: Office, 
-              where: { office_id: headOffice.office_id },
-              as: 'office',
-              required: true,
-            },
-            { model: Header, as: 'header' },
-            { model: Receiver, as: 'receiver' },
-            { model: CC, as: 'cc' },
-            { model: Approver, as: 'approver' },
-            { model: Footer, as: 'footer' },
-          ],
-        });
-    
-        return letters;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    }
-      
-    else if (role === "Manager") { 
-      try {
+        if (!headOffice) throw new Error('No office found for this head.');
+
+        whereConditions = { '$office.office_id$': headOffice.office_id }; // Join Office and filter by office_id
+        break;
+
+      case "Manager":
         const managedOffices = await Office.findAll({
           where: { manager: user_id },
           attributes: ['office_id'],
         });
-    
         if (!managedOffices || managedOffices.length === 0) {
           throw new Error('No offices found for this manager.');
         }
-    
         const officeIds = managedOffices.map((office) => office.office_id);
-    
-        const letters = await Letter.findAll({
-          where: { 
-            status: { [Op.ne]: 'Pending for department approval' } // Not equal to 'Pending for department approval'
-          },          
-          include: [
-            {
-              model: User,
-              as: 'writer',
-            },
-            {
-              model: Office,
-              where: { office_id: { [Op.in]: officeIds } },
-              as: 'office',
-              required: true,
-            },
-            { model: Header, as: 'header' },
-            { model: Receiver, as: 'receiver' },
-            { model: CC, as: 'cc' },
-            { model: Approver, as: 'approver' },
-            { model: Footer, as: 'footer' },
-          ],
+
+        whereConditions = {
+          status: { [Op.ne]: 'Pending for department approval' }, // Filter out 'Pending for department approval' status
+          '$office.office_id$': { [Op.in]: officeIds }, // Join Office and filter by multiple office_ids
+        };
+        break;
+
+      case "Executive":
+        // No additional conditions for Executive role
+        break;
+
+      default:
+        throw new Error('Invalid role specified');
+    }
+
+    // Fetch the letters based on the role
+    const letters = await Letter.findAll({
+      where: whereConditions,
+      include: commonIncludes,
+    });
+
+        // Handle duplication of ref_no
+        const seenRefNos = new Set();
+        const uniqueLetters = letters.filter(letter => {
+          const key = letter.ref_no; // Use ref_no to identify duplicates
+          if (seenRefNos.has(key)) {
+            return false; // Skip duplicate
+          } else {
+            seenRefNos.add(key);
+            return true;
+          }
         });
     
-        return letters;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-      
-      }
-    else if (role === "Executive") { 
-      const letters = await Letter.findAll({
-        include: [
-          { model: Header, as: 'header' },
-          { model: User, as: 'writer' },
-          { model: Receiver, as: 'receiver' },
-          { model: CC, as: 'cc' },
-          { model: Approver, as: 'approver' },
-          { model: Footer, as: 'footer' },
-          { model: Office, as: 'office' },
-        ],
-      });
-      return letters;
-      }
-    else{
-        throw new Error('Invalid role specified');
-      }
-
+        // Handle office head assignment based on office type
+        uniqueLetters.forEach(letter => {
+          const office = letter.office; // Get the office details
+    
+          // Check if the office type is "Executive" or "Managing" and adjust head assignment accordingly
+          if (office.type === "Executive") {
+            office.head = null;
+            office.manager = null;
+            office.executive = office.executive;
+          } else if (office.type === "Managing") {
+            office.head = null;
+            office.manager = office.manager; 
+            office.executive = office.executive;
+          }
+        });
+      return uniqueLetters; // Return the processed unique letters
   } catch (error) {
     console.error('Error retrieving letters:', error);
     throw error;
   }
 };
-
 
 
 const receivedLetters = async (email) => {
@@ -196,8 +165,8 @@ const receivedLetters = async (email) => {
       attributes: ['receiver_id'], // Fetch only receiver_id
     });
 
-    // Return an empty array if no receivers are found
-    if (receivers.length === 0) {
+    // If no receivers are found, return an empty array or handle the case
+    if (!receivers || receivers.length === 0) {
       console.log("No receivers found for the given email.");
       return [];
     }
@@ -205,8 +174,8 @@ const receivedLetters = async (email) => {
     // Extract receiver IDs
     const receiverIds = receivers.map(({ receiver_id }) => receiver_id);
 
-    // Fetch archived letters for matching receiver IDs
-    return await Letter.findAll({
+    // Fetch all letters with archived status
+    const letters = await Letter.findAll({
       where: {
         receiver_id: receiverIds,
         status: "Archived",
@@ -221,11 +190,42 @@ const receivedLetters = async (email) => {
         { model: Office, as: 'office' },
       ],
     });
+
+    // Handle duplication of ref_no
+    const seenRefNos = new Set();
+    const uniqueLetters = letters.filter(letter => {
+      const key = letter.ref_no; // Use ref_no to identify duplicates
+      if (seenRefNos.has(key)) {
+        return false; // Skip duplicate
+      } else {
+        seenRefNos.add(key);
+        return true;
+      }
+    });
+
+    // Handle office head assignment based on office type
+    uniqueLetters.forEach(letter => {
+      const office = letter.office; // Get the office details
+
+      // Check if the office type is "Executive" or "Managing" and adjust head assignment accordingly
+      if (office.type === "Executive") {
+        office.head = null;
+        office.manager = null;
+        office.executive = office.executive;
+      } else if (office.type === "Managing") {
+        office.head = null;
+        office.manager = office.manager; 
+        office.executive = office.executive;
+      }
+    });
+
+    return uniqueLetters; // Return the processed unique letters
   } catch (error) {
     console.error("Error retrieving letters:", error);
     throw error;
   }
 };
+
 
 
 

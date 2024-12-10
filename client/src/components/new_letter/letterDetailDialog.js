@@ -9,10 +9,10 @@ import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
+
 const LetterDetailDialog = ({ open, onClose, selectedLetter }) => {
 
   
-  console.log(selectedLetter)
   const officeName = selectedLetter?.office?.office_name;
   if (!selectedLetter) return null;
 
@@ -82,7 +82,8 @@ const LetterDetailDialog = ({ open, onClose, selectedLetter }) => {
           />
           <Typography>{selectedLetter.header.header_title}</Typography>
         </Box>
-        <Divider sx={{ pt: 0 }} />
+        <Divider sx={{ pt: 1, borderBottom: '1px solid #000000', opacity: 1 }} />
+        <Divider sx={{ pt: 0.3, borderBottom: '1px solid #000000', opacity: 1 }} />
 
         {/* Number and Date section */}
         <Box
@@ -217,7 +218,7 @@ const LetterDetailDialog = ({ open, onClose, selectedLetter }) => {
         </Box>
 
         {/* Footer section */}
-        <Divider sx={{ paddingTop: 3 }} />
+        <Divider sx={{ pt: 3, pb:1, borderBottom: '1px solid #000000', opacity: 1 }} />
         <Box
           sx={{
             display: 'flex',
@@ -235,6 +236,9 @@ const LetterDetailDialog = ({ open, onClose, selectedLetter }) => {
             </Typography>
             <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
               {selectedLetter.footer.address && <LocationOnIcon />} {selectedLetter.footer.address}
+            </Typography>
+            <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
+              {selectedLetter.footer.pobox && <EmailIcon />} {selectedLetter.footer.pobox}
             </Typography>
             <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
               {selectedLetter.footer.website && <LanguageIcon />} {selectedLetter.footer.website}
@@ -284,7 +288,9 @@ const LetterDetailDialog = ({ open, onClose, selectedLetter }) => {
           />
           <Typography>{selectedLetter.header.header_title}</Typography>
         </Box>
-        <Divider sx={{ pt: 0 }} />
+        <Divider sx={{ pt: 1, borderBottom: '2px solid #000000', opacity: 1 }} />
+        <Divider sx={{ pt: 0.3, borderBottom: '2px solid #000000', opacity: 1 }} />
+
 
          {/* Number and Date section */}
         <Box
@@ -354,55 +360,58 @@ const LetterDetailDialog = ({ open, onClose, selectedLetter }) => {
             <strong> ከሰላምታ ጋር </strong>
           </Typography>
         </Box>
-
-        {/* CC section */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'start',
-            justifyContent: 'start',
-            paddingTop: 20,
-          }}
-        >
-          <Typography variant="subtitle1">
-            <strong>ግልባጭ: </strong>
-          </Typography>
-          {selectedLetter.cc.ccs_name.map((name, index) => (
-            <Typography key={index} variant="subtitle1" sx={{ pl: 2 }}>
-              {name}
+        
+          {/* CC section */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'start',
+              justifyContent: 'start',
+              paddingTop:40,
+            }}
+          >
+            <Typography variant="subtitle1">
+              <strong>ግልባጭ: </strong>
             </Typography>
-          ))}
-        </Box>
-
-        {/* Footer section */}
-        <Divider sx={{ paddingTop: 3 }} />
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Box>
-            <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
-              {selectedLetter.footer.phone && <PhoneIcon />} {selectedLetter.footer.phone}
-            </Typography>
-            <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
-              {selectedLetter.footer.email && <EmailIcon />} {selectedLetter.footer.email}
-            </Typography>
-            <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
-              {selectedLetter.footer.address && <LocationOnIcon />} {selectedLetter.footer.address}
-            </Typography>
-            <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
-              {selectedLetter.footer.website && <LanguageIcon />} {selectedLetter.footer.website}
-            </Typography>
+            {selectedLetter.cc.ccs_name.map((name, index) => (
+              <Typography key={index} variant="subtitle1" sx={{ pl: 2 }}>
+                {name}
+              </Typography>
+            ))}
           </Box>
-          <Box>
-            <Typography variant="body2">{selectedLetter.footer.slogan}</Typography>
+
+          {/* Footer section */}
+          <Divider sx={{ pt: 4, borderBottom: '2px solid #000000', opacity: 1 }} />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Box>
+              <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
+                {selectedLetter.footer.phone && <PhoneIcon />} {selectedLetter.footer.phone}
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
+                {selectedLetter.footer.email && <EmailIcon />} {selectedLetter.footer.email}
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
+                {selectedLetter.footer.address && <LocationOnIcon />} {selectedLetter.footer.address}
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
+                {selectedLetter.footer.pobox && <EmailIcon />} {selectedLetter.footer.pobox}
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'inline', mx: 1 }}>
+                {selectedLetter.footer.website && <LanguageIcon />} {selectedLetter.footer.website}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2">{selectedLetter.footer.slogan}</Typography>
+            </Box>
           </Box>
-        </Box>
     </Box>
   
   </>
