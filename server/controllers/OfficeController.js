@@ -14,8 +14,8 @@ const {
 const addOfficesHandler = async (req, res) => {
     try {
         const id = uuidv4();
-        const { name, writer, head, manager, type } = req.body;
-        const office = await addOffice(id, name, writer, head, manager, type);
+        const { name, writer, head, manager, executive, type } = req.body;
+        const office = await addOffice(id, name, writer, head, manager, executive, type);
         res.status(201).json(office);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -34,7 +34,7 @@ const getOfficesHandler = async (req, res) => {
 
 const updateOfficeHandler = async (req, res) => {
     try {
-      const { office_id } = req.params; // Get user ID from the request parameters
+      const { office_id } = req.params; // Get office ID from the request parameters
       const { office_name, writer, head, manager } = req.body;
         const result = await updateOffice(office_id, office_name, writer, head, manager);
         res.status(200).json(result);

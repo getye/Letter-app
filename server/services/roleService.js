@@ -38,55 +38,31 @@ const getRoles = async () => {
 // Function to update a role by ID
 const updateRole = async (role_id, role_name, permissions) => {
   try {
-    console.log("permissions:", permissions)
-    // Ensure permissions is an array (if it's not already)
-    let formattedPermissions = [];
 
-    // If permissions is already an array, use it directly
-    if (Array.isArray(permissions)) {
-      formattedPermissions = permissions;
-    }
-    // If permissions is an object, filter the true ones and convert to an array
-    else if (typeof permissions === 'object') {
-      formattedPermissions = Object.keys(permissions).filter(key => permissions[key]);
+
+    if (!Array.isArray(permissions)) {
+      return res.status(400).json({ message: 'Invalid permissions format' });
     }
 
-    // If no permissions are active, set to an empty array (or a default permission)
-    if (formattedPermissions.length === 0) {
-      formattedPermissions = [];  // Or set to ["DefaultPermission"] if you want a default
-    }
-
-    // Ensure it's an array format like ["ViewLetter", "CommentLetter"]
-    console.log("Formatted Permissions:", formattedPermissions);
-
-    // Update the role in the database
     const [updatedRowsCount] = await Role.update(
       {
-        role_name,
-        permissions: formattedPermissions,  // Store the permissions directly as an array
+        role_name: role_name,
+        permissions:permissions, // Store permissions as an array
       },
       {
-        where: { role_id },
-        returning: true,  // Return updated record
+        where: { role_id:role_id },
       }
     );
 
     if (updatedRowsCount === 0) {
-      throw new Error(`Role with ID ${role_id} not found.`);
+      return res.status(404).json({ message: 'Role not found' });
     }
 
-    // Retrieve the updated role from the database
-    const updatedRole = await Role.findOne({
-      where: { role_id },
-    });
-
-    console.log("Role updated:", updatedRole);
-    return updatedRole;
   } catch (error) {
-    console.error("Error updating role:", error);
-    throw error;
+    console.error('Error updating role:', error);
   }
 };
+
 
 
 

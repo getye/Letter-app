@@ -39,7 +39,15 @@ const Office = sequelize.define('Office', {
       model: User, // User table
       key: 'user_id',
     },
-  },
+  },  
+  executive: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    references: {
+      model: User, // User table
+      key: 'user_id',
+    },
+  },  
   type: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -51,8 +59,9 @@ const Office = sequelize.define('Office', {
 
 // Define associations
 Office.belongsTo(User, { foreignKey: 'writer', targetKey: 'user_id', as: 'Writer' });
-Office.belongsTo(User, { foreignKey: 'head', targetKey: 'user_id' });
-Office.belongsTo(User, { foreignKey: 'manager', targetKey: 'user_id' });
+Office.belongsTo(User, { foreignKey: 'head', targetKey: 'user_id', as:'Head' });
+Office.belongsTo(User, { foreignKey: 'manager', targetKey: 'user_id', as:'Manager' });
+Office.belongsTo(User, { foreignKey: 'executive', targetKey: 'user_id', as:'Executive' });
 
 
 module.exports = Office;

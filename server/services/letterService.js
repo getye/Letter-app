@@ -6,7 +6,7 @@ const CC = require('../models/CcsModel');
 const Approver = require('../models/ApproverModel');
 const Footer = require('../models/FooterModel');
 const Office = require('../models/OfficeModel');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 
 
@@ -34,28 +34,7 @@ const addLetter = async (ref_no, date, header, writer, receivers, subject, conte
   }
 };
 
-/*
-const getLetters = async (user_id, role) => {
-  try {
-    const letters = await Letter.findAll({
-      include: [
-        { model: Header, as: 'header' },
-        { model: User, as: 'writer' },
-        { model: Receiver, as: 'receiver' },
-        { model: CC, as: 'cc' },
-        { model: Approver, as: 'approver' },
-        { model: Footer, as: 'footer' },
-      ],
-    },
-  {
-    where: { writer_id: user_id },
-  });
-    return letters;
-  } catch (error) {
-    console.error("Error retrieving letters:", error);
-    throw error;
-  }
-}; */
+
 
 // Function to update Letter
 const updateLetter = async (ref_no, subject, content, status) => {
@@ -82,7 +61,6 @@ const updateLetter = async (ref_no, subject, content, status) => {
 const getLetters = async (user_id, role) => {
 
   try {
-    // Determine the query conditions based on the role
     if (role === "Writer") {
       const letters = await Letter.findAll({
         where: { writer_id: user_id },
@@ -93,6 +71,7 @@ const getLetters = async (user_id, role) => {
           { model: CC, as: 'cc' },
           { model: Approver, as: 'approver' },
           { model: Footer, as: 'footer' },
+          { model: Office, as: 'office' },
         ],
       });
   
@@ -119,6 +98,7 @@ const getLetters = async (user_id, role) => {
             {
               model: Office, 
               where: { office_id: headOffice.office_id },
+              as: 'office',
               required: true,
             },
             { model: Header, as: 'header' },
@@ -150,7 +130,9 @@ const getLetters = async (user_id, role) => {
         const officeIds = managedOffices.map((office) => office.office_id);
     
         const letters = await Letter.findAll({
-          //where: { status: 'Pending for managing approval' },
+          where: { 
+            status: { [Op.ne]: 'Pending for department approval' } // Not equal to 'Pending for department approval'
+          },          
           include: [
             {
               model: User,
@@ -159,6 +141,7 @@ const getLetters = async (user_id, role) => {
             {
               model: Office,
               where: { office_id: { [Op.in]: officeIds } },
+              as: 'office',
               required: true,
             },
             { model: Header, as: 'header' },
@@ -185,6 +168,7 @@ const getLetters = async (user_id, role) => {
           { model: CC, as: 'cc' },
           { model: Approver, as: 'approver' },
           { model: Footer, as: 'footer' },
+          { model: Office, as: 'office' },
         ],
       });
       return letters;
@@ -200,8 +184,54 @@ const getLetters = async (user_id, role) => {
 };
 
 
+
+const receivedLetters = async (email) => {
+  try {
+    // Fetch all receiver IDs where the email matches
+    const receivers = await Receiver.findAll({
+      where: Sequelize.where(
+        Sequelize.fn('JSON_CONTAINS', Sequelize.col('receiver_email'), JSON.stringify(email)),
+        true
+      ),
+      attributes: ['receiver_id'], // Fetch only receiver_id
+    });
+
+    // Return an empty array if no receivers are found
+    if (receivers.length === 0) {
+      console.log("No receivers found for the given email.");
+      return [];
+    }
+
+    // Extract receiver IDs
+    const receiverIds = receivers.map(({ receiver_id }) => receiver_id);
+
+    // Fetch archived letters for matching receiver IDs
+    return await Letter.findAll({
+      where: {
+        receiver_id: receiverIds,
+        status: "Archived",
+      },
+      include: [
+        { model: Header, as: 'header' },
+        { model: User, as: 'writer' },
+        { model: Receiver, as: 'receiver' },
+        { model: CC, as: 'cc' },
+        { model: Approver, as: 'approver' },
+        { model: Footer, as: 'footer' },
+        { model: Office, as: 'office' },
+      ],
+    });
+  } catch (error) {
+    console.error("Error retrieving letters:", error);
+    throw error;
+  }
+};
+
+
+
 module.exports = {
   addLetter,
   getLetters,
   updateLetter,
+  receivedLetters,
 };

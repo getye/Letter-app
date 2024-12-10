@@ -295,7 +295,7 @@ export const Profile = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose} sx={{ bgcolor: 'red', color: 'white', textTransform: 'none' }}>Cancel</Button>
-          <Button onClick={handleUpdatePassword}sx={{ bgcolor: '#FF8C00', color: 'white', textTransform: 'none' }}>Update</Button>
+          <Button onClick={handleUpdatePassword}sx={{ bgcolor: '#357EC7', color: 'white', textTransform: 'none' }}>Update</Button>
         </DialogActions>
       </Dialog>
       <Snackbar

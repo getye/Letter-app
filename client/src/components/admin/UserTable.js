@@ -81,7 +81,6 @@ export const UserTable = ({ handleOpen }) => {
     <>
       <Box sx={{ paddingTop: 3, 
         ml: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
-        mr: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
         mb: {xs: 1, sm: 2, md: 3, lg: 4},
       }}>
         <MaterialReactTable
@@ -95,8 +94,6 @@ export const UserTable = ({ handleOpen }) => {
               onClick={handleOpen}
               sx={{
                 bgcolor: '#357EC7',
-                paddingLeft: 3,
-                paddingRight: 3,
                 borderRadius: 1,
                 color: 'white',
                 textTransform: 'none',
@@ -106,7 +103,7 @@ export const UserTable = ({ handleOpen }) => {
                 },
               }}
             >
-              Add
+              Add User
             </Button>
           )}
         />

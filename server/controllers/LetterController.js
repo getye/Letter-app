@@ -8,11 +8,12 @@ const { getOfficesByUserId } = require('../services/officeService')
 const { 
     addLetter,
     getLetters,
-    updateLetter
+    updateLetter,
+    receivedLetters,
    } = require('../services/letterService');
 
 //function to generate reference number
- const generateReferenceNumber = () => {
+const generateReferenceNumber = () => {
      const date = new Date();
    
      // Convert Gregorian date to Ethiopian
@@ -100,18 +101,48 @@ const getLettersHandler = async (req, res) => {
 const updateLetterHandler = async (req, res) => {
   try {
     const { ref_no } = req.params;
-    const { subject, content, status } = req.body;
+    const { subject, content } = req.body;
+    const writer = req.user.userId;
+    const office_type = await getOfficesByUserId(writer)
+    const officeType = office_type.length > 0 ? office_type[0].dataValues.type : null;
+
+    let status = "";
+    switch(officeType){
+       case "Department":
+         status ="Pending for department approval";
+         break;
+       case "Managing":
+         status ="Pending for managing approval";
+         break;
+       case "Executive":
+         status ="Pending for executive approval"; 
+         break;
+       default:
+         console.log("Error")
+    }
       const result = await updateLetter(ref_no, subject, content, status);
       res.status(200).json(result);
   } catch (error) {
       res.status(500).json({ error: error.message });
   }
 };
+
+const receivedLettersHandler = async (req, res) => {
+  try {
+      const { email } = req.params;
+      const letters = await receivedLetters(email);
+      res.status(200).json(letters);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
    
 
 module.exports = { 
   addLetterHandler, 
   getLettersHandler,
   updateLetterHandler,
+  receivedLettersHandler,
    };
  

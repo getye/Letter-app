@@ -4,8 +4,8 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, F
 const UpdateOfficeModal = ({ open, office, onClose, onSubmit }) => {
   const [office_name, setOfficeName] = useState(office.office_name);
   const [writer, setWriter] = useState(office.writer);
-  const [head, setHead] = useState(office.head);
-  const [manager, setManager] = useState(office.manager);
+  const [head, setHead] = useState(office.head ? office.head: '');
+  const [manager, setManager] = useState(office.manager ? office.manager: '');
   const [users, setUsers] = useState([]);
 
 
@@ -96,72 +96,76 @@ const UpdateOfficeModal = ({ open, office, onClose, onSubmit }) => {
 
           </Select>
         </FormControl>
-
-        <FormControl fullWidth margin="dense">
-          <InputLabel id="head">Select Head</InputLabel>
-          <Select
-            labelId="haed"
-            name="head"
-            id="haed"
-            label="Select Head"
-            size='small'
-            value={head}
-            onChange= {(e) => setHead(e.target.value)}
-            sx={{paddingBottom:1}}
-          >
-            {
-            users.length > 0 ? (
-              users.some((user) => user.user_role === "Head") ? ( // Check if there is at least one writer
-                users
-                  .filter((user) => user.user_role === "Head") // Filter only "Writer" roles
-                  .map((user) => (
-                    <MenuItem key={user.user_id} value={user.user_id}>
-                      {user.user_name}
-                    </MenuItem>
-                  ))
+        
+        {office.head && (
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="head">Select Head</InputLabel>
+            <Select
+              labelId="haed"
+              name="head"
+              id="haed"
+              label="Select Head"
+              size='small'
+              value={head}
+              onChange= {(e) => setHead(e.target.value)}
+              sx={{paddingBottom:1}}
+            >
+              {
+              users.length > 0 ? (
+                users.some((user) => user.user_role === "Head") ? ( // Check if there is at least one writer
+                  users
+                    .filter((user) => user.user_role === "Head") // Filter only "Writer" roles
+                    .map((user) => (
+                      <MenuItem key={user.user_id} value={user.user_id}>
+                        {user.user_name}
+                      </MenuItem>
+                    ))
+                ) : (
+                  <MenuItem value="">No Head available</MenuItem>
+                )
               ) : (
-                <MenuItem value="">No Head available</MenuItem>
+                <MenuItem value="">No users available</MenuItem> // Handle case where no users exist at all
               )
-            ) : (
-              <MenuItem value="">No users available</MenuItem> // Handle case where no users exist at all
-            )
-          }
+            }
 
-          </Select>
-        </FormControl>
+            </Select>
+          </FormControl>
+        )}
 
-        <FormControl fullWidth margin="dense">
-          <InputLabel id="manager">Select Manager</InputLabel>
-          <Select
-            labelId="manager"
-            name="manager"
-            id="manager"
-            label="Select Manager"
-            size='small'
-            value={manager}
-            onChange= {(e) => setManager(e.target.value)}
-            sx={{paddingBottom:1}}
-          >
-            {
-            users.length > 0 ? (
-              users.some((user) => user.user_role === "Manager") ? ( // Check if there is at least one writer
-                users
-                  .filter((user) => user.user_role === "Manager") // Filter only "Writer" roles
-                  .map((user) => (
-                    <MenuItem key={user.user_id} value={user.user_id}>
-                      {user.user_name}
-                    </MenuItem>
-                  ))
+        {office.manager && (
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="manager">Select Manager</InputLabel>
+            <Select
+              labelId="manager"
+              name="manager"
+              id="manager"
+              label="Select Manager"
+              size='small'
+              value={manager}
+              onChange= {(e) => setManager(e.target.value)}
+              sx={{paddingBottom:1}}
+            >
+              {
+              users.length > 0 ? (
+                users.some((user) => user.user_role === "Manager") ? ( // Check if there is at least one writer
+                  users
+                    .filter((user) => user.user_role === "Manager") // Filter only "Writer" roles
+                    .map((user) => (
+                      <MenuItem key={user.user_id} value={user.user_id}>
+                        {user.user_name}
+                      </MenuItem>
+                    ))
+                ) : (
+                  <MenuItem value="">No Manager available</MenuItem>
+                )
               ) : (
-                <MenuItem value="">No Manager available</MenuItem>
+                <MenuItem value="">No users available</MenuItem> // Handle case where no users exist at all
               )
-            ) : (
-              <MenuItem value="">No users available</MenuItem> // Handle case where no users exist at all
-            )
-          }
+            }
 
-          </Select>
-        </FormControl>
+            </Select>
+          </FormControl>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} sx={{ bgcolor: 'red', color: 'white', textTransform: 'none' }}>Cancel</Button>

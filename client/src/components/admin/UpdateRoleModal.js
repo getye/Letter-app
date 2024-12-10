@@ -14,25 +14,56 @@ const UpdateRoleModal = ({ open, role, onClose, onSubmit }) => {
         ApproveLetter: false,
       });
 
-  useEffect(() => {
-    if (role) {
-      setRoleName(role.role_name);
-      setPermissions(role.permissions || '{}'); // Initialize permissions if provided
-    }
-  }, [role]);
 
-  const handlePermissionChange = (e) => {
-    setPermissions({ ...permissions, [e.target.name]: e.target.checked });
-  };
+      useEffect(() => {
+        if (role) {
+          setRoleName(role.role_name);
+      
+          // Parse the permissions array from the string
+          const parsedPermissions = Array.isArray(role.permissions)
+            ? role.permissions
+            : JSON.parse(role.permissions || '[]'); // Ensure it defaults to an empty array if undefined or invalid
+      
+          // Map the permissions array to the state object
+          const initialPermissions = {
+            CreateRole: parsedPermissions.includes('CreateRole'),
+            AddUser: parsedPermissions.includes('AddUser'),
+            CreateLetter: parsedPermissions.includes('CreateLetter'),
+            EditLetter: parsedPermissions.includes('EditLetter'),
+            DeleteLetter: parsedPermissions.includes('DeleteLetter'),
+            ViewLetter: parsedPermissions.includes('ViewLetter'),
+            CommentLetter: parsedPermissions.includes('CommentLetter'),
+            ApproveLetter: parsedPermissions.includes('ApproveLetter'),
+          };
+      
+          setPermissions(initialPermissions);
+        }
+      }, [role]);
+      
 
-  const handleSubmit = () => {
-    const updatedRole = {
-      ...role,
-      role_name: roleName,
-      permissions: JSON.stringify(permissions),
-    };
-    onSubmit(updatedRole);
-  };
+    const handlePermissionChange = (e) => {
+        const { name, checked } = e.target;
+        setPermissions((prevPermissions) => ({
+          ...prevPermissions,
+          [name]: checked,
+        }));
+      };
+      
+
+      const handleSubmit = () => {
+        const activePermissions = Object.keys(permissions).filter(
+          (key) => permissions[key]
+        );
+      
+        const updatedRole = {
+          ...role,
+          role_name: roleName,
+          permissions: activePermissions, // Pass an array of active permissions
+        };
+      
+        onSubmit(updatedRole); // Send updatedRole to the parent component
+      };
+      
 
   return (
     <Dialog open={open} onClose={onClose}>

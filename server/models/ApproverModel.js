@@ -10,18 +10,18 @@ const Approver = sequelize.define('Approver', {
     primaryKey: true,
   },
   approvers_name: {
-    type: DataTypes.JSON,
+    type: DataTypes.TEXT,
     allowNull: true,
   },
 
   approvers_position: {
-    type: DataTypes.JSON,
+    type: DataTypes.TEXT,
     allowNull: true,
   },
 
   approvers_segnature: {
-    type: DataTypes.JSON,
-    allowNull: false,
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
 
 }, {

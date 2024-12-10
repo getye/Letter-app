@@ -6,7 +6,7 @@ export const Dashboard =() =>{
 
 return (
     <>
-    <Box>
+    <Box sx={{ paddingTop: 3, ml:{sm:"10%", md:"20%"}}}>
         Dashboard
     </Box>
     </>

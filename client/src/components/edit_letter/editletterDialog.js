@@ -216,7 +216,6 @@ const handleSubmit = () => {
       const letter = { 
           subject: formData.subject,
           content: contentAsText,
-          status:"Pending",
          };
       const ref_no = selectedLetter.ref_no;
 

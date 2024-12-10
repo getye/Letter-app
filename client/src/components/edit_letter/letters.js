@@ -57,6 +57,16 @@ export const Letters = () => {
     fetchLetters();
   }, [role]);
 
+  // Sorting by the most recent date
+  const sortedLetter = Array.isArray(letters) && letters.length > 0
+  ? letters.sort((a, b) => {
+      const dateA = new Date(a.date.split('/').reverse().join('-'));
+      const dateB = new Date(b.date.split('/').reverse().join('-'));
+      return dateB - dateA; // Descending order
+    })
+  : []; // Return an empty array if letters is empty or not an array
+
+
   const handleViewDetail = (letter) => {
     const parsedLetter = {
       ...letter,
@@ -70,6 +80,16 @@ export const Letters = () => {
         ccs_name: JSON.parse(letter.cc.ccs_name),
         ccs_email: JSON.parse(letter.cc.ccs_email),
       },
+      approver: {
+        approvers_name: letter.approver && letter.approver.approvers_name
+          ? letter.approver.approvers_name // safely access approvers_name if approver is not null
+          : '',  // Default to an empty string if approver is null or approvers_name is not available
+        approvers_position: letter.approver && letter.approver.approvers_position
+          ? JSON.parse(letter.approver.approvers_position) 
+          : '',  // Default to an empty array if approvers_position is not available
+      }
+      
+      
     };
 
     setSelectedLetter(parsedLetter);
@@ -219,7 +239,7 @@ export const Letters = () => {
     <Box sx={{ paddingTop: 3, width: {xs:'100%', sm:'95%', md:'90%'}, margin: 'auto' }}>
       <MaterialReactTable
         columns={columns}
-        data={letters}
+        data={sortedLetter}
         enableSorting
         enableColumnFiltering
         initialState={{ pagination: { pageSize: 3, pageIndex: 0 } }}

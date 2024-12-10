@@ -160,13 +160,9 @@ const deleteUserHandler = async (req, res) => {
 
 
 const updatePasswordHandler = async (req, res) => {
-  
   const user_id = req.user.userId;
   const { password } = req.body; // Get the new password from the request body
-  console.log("user id: ", user_id)
-  console.log("password: ", password)
   const hashedpass = await bcrypt.hash(password, 10);
-  console.log("hashed password: ", hashedpass)
   try {  
     // Call the model function to update the user status
     const updatedPasswored = await updatePassword(user_id, hashedpass);

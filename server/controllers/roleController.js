@@ -39,6 +39,7 @@ const getRolesHandler = async (req, res) => {
 const roleUpdateHandler = async (req, res) => {
   try {
     const { role_id } = req.params; // Get role_id from URL params
+    console.log("Role id:", role_id)
     const { role_name, permissions } = req.body;
       await updateRole(role_id, role_name, permissions);
       res.status(200).json({ message: 'Role updated successfully' });

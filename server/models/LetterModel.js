@@ -104,7 +104,7 @@ Letter.belongsTo(Receiver, { foreignKey: 'receiver_id', as: 'receiver' });
 Letter.belongsTo(CC, { foreignKey: 'cc_id', as: 'cc' });
 Letter.belongsTo(Approver, { foreignKey: 'approvers_id', as: 'approver' });
 Letter.belongsTo(Footer, { foreignKey: 'footer_id', as: 'footer' });
-Letter.belongsTo(Office, { foreignKey: 'writer_id', targetKey: 'writer' });
+Letter.belongsTo(Office, { foreignKey: 'writer_id', targetKey: 'writer', as:"office" });
 
 module.exports = Letter;
 

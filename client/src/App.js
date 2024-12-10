@@ -20,6 +20,7 @@ import { Dashboard } from './components/dashboard';
 import { Letters } from './components/edit_letter/letters';
 import { NewLetter } from './components/new_letter/newLetter';
 import { ToastContainer } from "react-toastify";
+import { ReceivedLetters } from './components/edit_letter/receivedLetters';
 
 const theme = createTheme();
 
@@ -67,9 +68,14 @@ function App() {
 
             <Route
               path="/letters"
-              element={<Letters />}
+              element={<Letters/>}
             />
             
+            <Route
+              path="/received-letters"
+              element={<ReceivedLetters/>}
+            />
+           
             <Route
               path="/new-letter"
               element={<NewLetter/>}

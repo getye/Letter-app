@@ -172,8 +172,8 @@ const updateUserStatus = async (id, newStatus) => {
 // Function to delete a user by id
 const deleteUser = async (id) => {
   try {
-    const deletedUser = await User.destroy({ where: { user_id: id } });
     const deletedCount = await Account.destroy({ where: { user_id: id } });
+    const deletedUser = await User.destroy({ where: { user_id: id } });
     if (deletedCount & deletedUser === 0) {
       throw new Error(`User with email ${id} not found.`);
     }

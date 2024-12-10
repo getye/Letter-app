@@ -147,9 +147,11 @@ const handleDelete = async (office) => {
   
   const columns = [
     { accessorKey: 'office_name', header: 'Office Name' },
+    { accessorKey: 'type', header: 'Office Type' },
     { accessorKey: 'writer_name', header: 'Writer' },
     { accessorKey: 'head_name', header: 'Head' },
     { accessorKey: 'manager_name', header: 'Manager' },
+    { accessorKey: 'executive_name', header: 'Executive' },
     {
       header: 'Action',
       Cell: ({ row }) => (
@@ -175,7 +177,6 @@ const handleDelete = async (office) => {
   return (
     <Box sx={{ paddingTop: 3, 
       ml: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
-      mr: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
       mb: {xs: 1, sm: 2, md: 3, lg: 4},
     }}>
       <MaterialReactTable
@@ -187,7 +188,7 @@ const handleDelete = async (office) => {
         enableTopToolbar
         renderTopToolbarCustomActions={() => (
           <Button onClick={handleOpen} sx={{ bgcolor: '#357EC7', color: 'white', textTransform: 'none' }}>
-            Add
+            Add Office
           </Button>
         )}
       />

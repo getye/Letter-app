@@ -11,18 +11,17 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router-dom';
-import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
+import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import MenuIcon from '@mui/icons-material/Menu';  // Hamburger icon for mobile
-
-
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { Divider, MenuItem, Link, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import { Profile } from './profile';
-import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -31,7 +30,6 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
 
 
 const Footer = ({open, handleClose, handleOpen}) => (
@@ -149,19 +147,18 @@ export const MainBar = (props) => {
         <Divider />
 
 
-        
-        
-          <>
-          {permissions && permissions.includes('CreateRole') && (
-            <>
-            <ListItem disablePadding onClick={() => { navigate("/admin/dashboard") }}>
-              <ListItemButton >
+        <ListItem disablePadding onClick={() => { navigate("/dashboard") }}>
+              <ListItemButton>
                 <ListItemIcon>
-                  <SpaceDashboardOutlinedIcon />
+                  <SpaceDashboardOutlinedIcon/>
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
               </ListItemButton>
             </ListItem>
+        
+          <>
+          {permissions && permissions.includes('CreateRole') && (
+            <>
             <ListItem disablePadding onClick={() => { navigate("/admin/roles") }}>
               <ListItemButton >
                 <ListItemIcon>
@@ -172,8 +169,8 @@ export const MainBar = (props) => {
             </ListItem>
             </>
           )}
-            {permissions && permissions.includes('AddUser') && (
-              <>
+          {permissions && permissions.includes('AddUser') && (
+            <>
             <ListItem disablePadding onClick={() => { navigate("/admin/users") }}>
               <ListItemButton>
                 <ListItemIcon>
@@ -191,23 +188,29 @@ export const MainBar = (props) => {
               </ListItemButton>
             </ListItem>
             </>
-            )}
+          )}
             
-          {permissions && permissions.includes('ViewLetter') && (
+          {permissions && permissions.includes( 'ApproveLetter' ) && (
             <>
-            <ListItem disablePadding onClick={() => { navigate("dashboard") }}>
+
+            <ListItem disablePadding onClick={() => { navigate("/letters") }}>
               <ListItemButton>
                 <ListItemIcon>
-                  <SpaceDashboardOutlinedIcon />
+                  <MailOutlineIcon/>
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
+                <ListItemText primary="Letters" />
               </ListItemButton>
             </ListItem>
+            </>
+          )}
 
-            <ListItem disablePadding onClick={() => { navigate("letters") }}>
+        {permissions && permissions.includes( 'CreateLetter') && (
+            <>
+
+            <ListItem disablePadding onClick={() => { navigate("/letters") }}>
               <ListItemButton>
                 <ListItemIcon>
-                  <ForwardToInboxIcon/>
+                  <MailOutlineIcon/>
                 </ListItemIcon>
                 <ListItemText primary="Letters" />
               </ListItemButton>
@@ -226,12 +229,12 @@ export const MainBar = (props) => {
             </ListItem>
             )}
           {permissions && permissions.includes('ViewLetter') && (
-          <ListItem disablePadding onClick={() => { navigate("notification") }}>
+          <ListItem disablePadding onClick={() => { navigate("received-letters") }}>
               <ListItemButton>
                 <ListItemIcon>
-                  <NotificationsOutlinedIcon />
+                  <ForwardToInboxIcon />
                 </ListItemIcon>
-                <ListItemText primary="Notification" />
+                <ListItemText primary="Received Letters" />
               </ListItemButton>
           </ListItem>
           )}
@@ -263,8 +266,6 @@ export const MainBar = (props) => {
           {(!userRole) ? (
           <Toolbar sx={{ justifyContent: 'flex-end', flexDirection: 'row'}}>
               <MenuItem onClick={() => navigate('/')}>Home</MenuItem>
-              <MenuItem onClick={() => navigate('/admin/users')}>Users</MenuItem>
-              <MenuItem onClick={() => navigate('/admin/roles')}>Roles</MenuItem>
               <MenuItem onClick={() => navigate('/signin')}>Login</MenuItem>
           </Toolbar>
           ) : (

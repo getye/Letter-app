@@ -33,6 +33,7 @@ const RoleTable = ({ handleOpen }) => {
           'Authorization': `Bearer ${token}`, // Include the JWT token
         },
       });
+      
       const data = await response.json();
       //if (!Array.isArray(data)) throw new Error('Data is not an array');
       setRole(data);
@@ -187,7 +188,7 @@ const handleStatusChange = async (role) => {
   const columns = [
     { accessorKey: 'role_name', header: 'Role Name' },
     { accessorKey: 'permissions', header: 'Permissions',
-      cell: ({ row }) => row.original.permissions.join(' ') 
+      cell: ({ row }) => row.original.permissions 
      },
     {
       header: 'Action',
@@ -235,7 +236,6 @@ const handleStatusChange = async (role) => {
   return (
     <Box sx={{ paddingTop: 3, 
       ml: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
-      mr: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
       mb: {xs: 1, sm: 2, md: 3, lg: 4},
     }}>
       <MaterialReactTable
@@ -246,8 +246,13 @@ const handleStatusChange = async (role) => {
         initialState={{ pagination: { pageSize: 3, pageIndex: 0 } }}
         enableTopToolbar
         renderTopToolbarCustomActions={() => (
-          <Button onClick={handleOpen} sx={{ bgcolor: '#357EC7', color: 'white', textTransform: 'none' }}>
-            Add
+          <Button 
+            onClick={handleOpen} 
+            sx={{ 
+              bgcolor: '#357EC7', 
+              color: 'white', 
+              textTransform: 'none' }}>
+            Add Role
           </Button>
         )}
       />

@@ -5,7 +5,13 @@ import OfficeTable from './OfficeTable';
 
 export const AddOffice = () => {
   const [open, setOpen] = useState(false);
-  const [officeData, setOfficeData] = useState({ name: '', writer: '', head: '', manager: '', type: ''});
+  const [officeData, setOfficeData] = useState({
+     name: '', 
+     writer: '', 
+     head: '', 
+     manager: '', 
+     executive: '',
+     type: ''});
   const [users, setUsers] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -60,6 +66,12 @@ const handleInputChange = (event) => {
 
 const handleSubmit = async (event) => {
     event.preventDefault();
+    if(officeData.type === "Managing"){
+      officeData.head = null;
+    }else if( officeData.type === "Executive"){
+      officeData.head = null;
+      officeData.manager = null;
+    }
 
     try {
       const token = localStorage.getItem('token'); // Retrieve the token from storage
@@ -79,7 +91,13 @@ const handleSubmit = async (event) => {
       if (response.status === 201) {
         setNotificationMessage('Successfully registered');
         setShowNotification(true);
-        setOfficeData({ name: '', writer: '', head: '', manager: '', type:'' }); // Reset form
+        setOfficeData({ 
+          name: '', 
+          writer: '', 
+          head: '', 
+          manager: '', 
+          executive: '',
+          type:'' }); // Reset form
       } else {
         setNotificationMessage('Error in registration');
         setShowNotification(true);
@@ -99,10 +117,7 @@ const handleSubmit = async (event) => {
 
   return (
     <Box sx={{ paddingTop: 2, justifyContent: 'center',
-      ml: {xs: '5%', sm: '10%', md: '15%', lg: '20%'},
-      mr: {xs: '1%', sm: '3%', md: '5%', lg: '7%'},
-      mb: {xs: 1, sm: 2, md: 3, lg: 4},
-
+      width: { sm:'100%', md:'98%'},
     }}>
       <OfficeTable handleOpen={handleOpen} />
 
@@ -205,6 +220,7 @@ const handleSubmit = async (event) => {
           </FormControl>
             )}
 
+          {(officeData.type === "Department" || officeData.type === "Management") && (
           <FormControl fullWidth margin="dense">
             <InputLabel id="manager">Select Manager</InputLabel>
             <Select
@@ -229,6 +245,40 @@ const handleSubmit = async (event) => {
                     ))
                 ) : (
                   <MenuItem value="">No Manager available</MenuItem>
+                )
+              ) : (
+                <MenuItem value="">No users available</MenuItem> // Handle case where no users exist at all
+              )
+            }
+
+            </Select>
+          </FormControl>
+          )}
+
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="executive">Select Executive</InputLabel>
+            <Select
+              labelId="executive"
+              name="executive"
+              id="executive"
+              label="Select Executive"
+              size='small'
+              value={officeData.executive}
+              onChange={handleInputChange}
+              sx={{paddingBottom:1}}
+            >
+              {
+              users.length > 0 ? (
+                users.some((user) => user.user_role === "Executive") ? ( // Check if there is at least one Executive
+                  users
+                    .filter((user) => user.user_role === "Executive") // Filter only "Executive" roles
+                    .map((user) => (
+                      <MenuItem key={user.user_id} value={user.user_id}>
+                        {user.user_name}
+                      </MenuItem>
+                    ))
+                ) : (
+                  <MenuItem value="">No Executive available</MenuItem>
                 )
               ) : (
                 <MenuItem value="">No users available</MenuItem> // Handle case where no users exist at all

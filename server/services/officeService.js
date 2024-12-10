@@ -3,7 +3,7 @@ const User = require('../models/UserModel');
 
 
 // Function to add office
-const addOffice = async (id, name, writer, head, manager, type) => {
+const addOffice = async (id, name, writer, head, manager, executive, type) => {
   try {
     
     const office = await Office.create({
@@ -12,7 +12,8 @@ const addOffice = async (id, name, writer, head, manager, type) => {
       writer: writer,
       head: head,
       manager: manager,
-      type:type
+      executive: executive,
+      type: type
     });
     return office;
   } catch (error) {
@@ -30,6 +31,7 @@ const getOffices = async () => {
         { model: User, as: 'Writer', attributes: ['user_name'] }, // Include writer's name
         { model: User, as: 'Head', attributes: ['user_name'] },   // Include head's name
         { model: User, as: 'Manager', attributes: ['user_name'] }, // Include manager's name
+        { model: User, as: 'Executive', attributes: ['user_name'] }, // Include executive's name
       ],
     });
 
@@ -41,6 +43,7 @@ const getOffices = async () => {
         writer_name: officeData.Writer?.user_name || null,
         head_name: officeData.Head?.user_name || null,
         manager_name: officeData.Manager?.user_name || null,
+        executive_name: officeData.Executive?.user_name || null,
       };
     });
 
@@ -69,13 +72,15 @@ const getOfficesByUserId = async (userId) => {
 const updateOffice = async (id, office_name, writer, head, manager) => {
   try {
     const updatedOffice = await Office.update(
-      { office_name: office_name },
-      { writer: writer },
-      { head: head },
-      { manager: manager },
       {
-        where: { office_id: id },
-        returning: true, // Return the updated row(s)
+        office_name: office_name,
+        writer: writer,
+        head: head,
+        manager: manager,
+      }, // Object containing fields to update
+      {
+        where: { office_id: id }, // Options object
+        returning: true, // Return the updated rows
       }
     );
 

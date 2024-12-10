@@ -24,20 +24,24 @@ export const Signin = () => {
       });
 
       const responseData = await response.json();
-      console.log("Response:", responseData)
 
       if (response.ok) {
         localStorage.setItem('token', responseData.token);
         localStorage.setItem('userRole', responseData.user_role);
         const permissions = JSON.parse(responseData.permissions);
         localStorage.setItem('permissions', permissions);
+        localStorage.setItem('email', responseData.user_email);
 
       
 
         if (permissions.includes('CreateRole' || 'AddUser')) {
-          navigate('/admin/dashboard');
-        }else if (permissions.includes('ViewLetter' || 'CreateLetter' || 'ApproveLetter')) {
-          navigate('/dashboard');
+          navigate('/admin/roles');
+        }else if (permissions.includes('ApproveLetter')) {
+          navigate('/letters');
+        }else if (permissions.includes('CreateLetter')) {
+          navigate('/letters');
+        }else if (permissions.includes('ViewLetter')) {
+          navigate('/received-letters');
         } else {
           navigate('/');
         } 
@@ -60,13 +64,23 @@ export const Signin = () => {
 
   return (
     <Box component={'form'} onSubmit={handleSubmit}>
-      <Grid container sx={{ paddingTop: 4, width: '80%', paddingLeft: 35 }}>
+      <Grid
+        container
+        sx={{
+          width: { xs: '100%', sm: '80%', md: '60%' },
+          ml: { xs: '1%', sm: '3%', md: '5%' },
+          mt:2,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Grid item xs={12} sm={8} sx={{ paddingLeft: 0 }}>
-          <Box sx={{ paddingLeft: 1, maxWidth:'80%' }}>
-            <Typography component="h1" variant="h5" sx={{paddingTop:2}}>
+          <Box sx={{ paddingLeft: 1, maxWidth: { sm: '80%' } }}>
+            <Typography component="h1" variant="h5" sx={{ paddingTop: 2 }}>
               Login
             </Typography>
-            <Divider fullWidth/>
+            <Divider fullWidth />
 
             <TextField
               margin="normal"
@@ -93,32 +107,32 @@ export const Signin = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                sx={{
-                  bgcolor: 'darkblue',
-                  paddingTop: 1,
-                  borderRadius: 2,
-                  color: 'white',
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: 'darkblue',
-                    opacity: 0.9,
-                  },
-                }}
-              >
-                Login
-              </Button>
-            <Grid className="footer">
-            </Grid>
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              sx={{
+                bgcolor: '#357EC7',
+                paddingTop: 1,
+                borderRadius: 2,
+                color: 'white',
+                textTransform: 'none',
+                '&:hover': {
+                  bgcolor: '#357EC7',
+                  opacity: 0.9,
+                },
+              }}
+            >
+              Login
+            </Button>
+            <Grid className="footer"></Grid>
           </Box>
         </Grid>
       </Grid>
+
 
       {/* Snackbar for notifications */}
       <Snackbar
