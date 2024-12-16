@@ -14,6 +14,11 @@ const Header = sequelize.define('Header', {
     allowNull: false,
   },
 
+  amharic_title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
   header_logo: {
     type: DataTypes.STRING,
     allowNull: true,

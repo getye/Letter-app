@@ -9,6 +9,7 @@ const Footer = sequelize.define('Footer', {
     unique: true,
     primaryKey: true,
   },
+  
   phone: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -18,22 +19,27 @@ const Footer = sequelize.define('Footer', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+
   address: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
   pobox: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
   slogan: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
   website: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
 }, {
   timestamps: false,
   tableName: 'footers', // Explicitly define the table name 

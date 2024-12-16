@@ -17,6 +17,7 @@ export const AddNewHeader = ({sendSelectedHeader, submit}) => {
   const [oldHeaderOpen, setOldHeaderOpen] =useState(false)
   const [header, setHeader] = useState({
     header_title: "",
+    amharic_header: "",
     header_logo: null,
   });
 
@@ -156,12 +157,22 @@ export const AddNewHeader = ({sendSelectedHeader, submit}) => {
           <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Header Text"
+                label="Header Text in English"
                 variant="outlined"
                 size="small"
                 required
                 value={header.header_title}
                 onChange={handleHeaderChange("header_title")}
+                sx={{ mb: 2 }}
+              /> 
+              <TextField
+                fullWidth
+                label="የራስጌ ጽሑፍ በአማርኛ"
+                variant="outlined"
+                size="small"
+                required
+                value={header.header_title}
+                onChange={handleHeaderChange("amharic_header")}
                 sx={{ mb: 2 }}
               /> 
 

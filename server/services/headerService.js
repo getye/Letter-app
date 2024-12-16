@@ -3,12 +3,13 @@ const Header = require('../models/HeaderModel');
 
 
 // Function to create new header
-const addHeader = async (id, title, logo) => {
+const addHeader = async (id, english_title, amharic_title, logo) => {
   try {
     
     const header = await Header.create({
       header_id: id,
-      header_title: title,
+      header_title: english_title,
+      amharic_title: amharic_title,
       header_logo: logo,
     });
     return header;
